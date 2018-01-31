@@ -21,7 +21,7 @@ import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.mvc.{AnyContentAsEmpty, Request, Result}
 import play.api.test.{DefaultAwaitTimeout, FakeRequest, FutureAwaits}
 import uk.gov.hmrc.auth.core.authorise.Predicate
-import uk.gov.hmrc.auth.core.retrieve.Retrieval
+import uk.gov.hmrc.auth.core.retrieve.{Retrieval, Retrievals}
 import uk.gov.hmrc.auth.core.{AffinityGroup, AuthConnector}
 import uk.gov.hmrc.http.{HeaderCarrier, SessionKeys}
 
@@ -33,7 +33,7 @@ class AccessAccountSsoWorkaroundControllerSpec extends WordSpec with Matchers wi
     "retrieve affinityGroup from auth and copy it into the Play session" in {
       val fakeAuthConnector = new AuthConnector {
         override def authorise[A](predicate: Predicate, retrieval: Retrieval[A])(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[A] = retrieval match {
-          case _: Retrieval[Option[AffinityGroup]] => Future successful Some(AffinityGroup.Individual).asInstanceOf[A]
+          case Retrievals.affinityGroup => Future successful Some(AffinityGroup.Individual).asInstanceOf[A]
           case _ => ???
         }
       }
@@ -50,7 +50,7 @@ class AccessAccountSsoWorkaroundControllerSpec extends WordSpec with Matchers wi
     "clear affinityGroup in play session when affinityGroup retrieved from auth is None" in {
       val fakeAuthConnector = new AuthConnector {
         override def authorise[A](predicate: Predicate, retrieval: Retrieval[A])(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[A] = retrieval match {
-          case _: Retrieval[Option[AffinityGroup]] => Future successful None.asInstanceOf[A]
+          case Retrievals.affinityGroup => Future successful None.asInstanceOf[A]
           case _ => ???
         }
       }
