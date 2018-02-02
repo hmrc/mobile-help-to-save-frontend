@@ -1,17 +1,14 @@
 import play.core.PlayVersion
-import play.sbt.PlayImport._
-import sbt._
+import play.sbt.PlayImport.ws
+import sbt.{ModuleID, _}
 
-object FrontendBuild extends Build with MicroService {
+object AppDependencies {
 
-  val appName = "mobile-help-to-save-frontend"
-
-  override lazy val appDependencies: Seq[ModuleID] = compile ++ test()
+  lazy val appDependencies: Seq[ModuleID] = compile ++ test()
 
   val compile = Seq(
     "uk.gov.hmrc" %% "govuk-template" % "5.18.0",
     "uk.gov.hmrc" %% "play-ui" % "7.13.0",
-
     ws,
     "uk.gov.hmrc" %% "bootstrap-play-25" % "1.3.0"
   )
