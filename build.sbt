@@ -50,8 +50,6 @@ scalacOptions += "-Ypartial-unification"
 libraryDependencies ++= AppDependencies.appDependencies
 retrieveManaged := true
 evictionWarningOptions in update := EvictionWarningOptions.default.withWarnScalaVersionEviction(false)
-//TODO remove
-routesGenerator := StaticRoutesGenerator
 
 unmanagedSourceDirectories in Test += baseDirectory.value / "testcommon"
 
