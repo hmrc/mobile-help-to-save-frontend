@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/hmrc/mobile-help-to-save-frontend.svg)](https://travis-ci.org/hmrc/mobile-help-to-save-frontend) [ ![Download](https://api.bintray.com/packages/hmrc/releases/mobile-help-to-save-frontend/images/download.svg) ](https://bintray.com/hmrc/releases/mobile-help-to-save-frontend/_latestVersion)
 
-This is a placeholder README.md for a new repository
+Works around an incompatibility between the Web Session API and the MDTP->NS&I SSO mechanism by populating the affinityGroup session attribute.
 
 ### License
 
