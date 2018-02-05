@@ -37,7 +37,7 @@ class AccessAccountSsoWorkaroundControllerSpec extends WordSpec with Matchers wi
           case _ => ???
         }
       }
-      val controller = new AccessAccountSsoWorkaroundController(fakeAuthConnector)
+      val controller = new AccessAccountSsoWorkaroundController(fakeAuthConnector, "/help-to-save/access-account")
 
       implicit val request: Request[AnyContentAsEmpty.type] = FakeRequest()
       val result: Result = await(controller.accessAccount(request))
@@ -54,7 +54,7 @@ class AccessAccountSsoWorkaroundControllerSpec extends WordSpec with Matchers wi
           case _ => ???
         }
       }
-      val controller = new AccessAccountSsoWorkaroundController(fakeAuthConnector)
+      val controller = new AccessAccountSsoWorkaroundController(fakeAuthConnector, "/help-to-save/access-account")
 
       implicit val request: Request[AnyContentAsEmpty.type] = FakeRequest().withSession(SessionKeys.affinityGroup -> "OldAffinityGroupInSession")
       val result: Result = await(controller.accessAccount(request))

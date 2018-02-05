@@ -23,6 +23,7 @@ import play.api.{Configuration, Environment}
 class GuiceModule(environment: Environment, configuration: Configuration) extends AbstractModule {
 
   override def configure(): Unit = {
+    bindConfigString("helpToSave.accessAccountUrl")
     bindConfigString("microservice.services.company-auth-frontend.external-url")
     bindConfigString("microservice.services.company-auth-frontend.sign-in.path")
   }

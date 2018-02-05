@@ -28,6 +28,7 @@ class AccessAccountSsoWorkaroundISpec extends WordSpec with Matchers with Option
 
   override implicit lazy val app: Application = wireMockApplicationBuilder()
     .configure(
+      "helpToSave.accessAccountUrl" -> "http://example.com/test-help-to-save/access-account",
       "microservice.services.company-auth-frontend.external-url" -> "http://localhost:9025",
       "microservice.services.company-auth-frontend.sign-in.path" -> "/gg/sign-in")
     .build()
@@ -39,8 +40,7 @@ class AccessAccountSsoWorkaroundISpec extends WordSpec with Matchers with Option
         .withFollowRedirects(false)
         .get())
       response.status shouldBe 303
-      // TODO add http://localhost:7000 prefix for local development
-      response.header("Location").value shouldBe "/help-to-save/access-account"
+      response.header("Location").value shouldBe "http://example.com/test-help-to-save/access-account"
     }
 
     "redirect to sign in if user is not logged in" in {
