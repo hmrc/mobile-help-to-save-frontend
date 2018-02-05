@@ -25,8 +25,6 @@ class GuiceModule(environment: Environment, configuration: Configuration) extend
   override def configure(): Unit = {
     bindConfigString("helpToSave.invitationUrl")
     bindConfigString("helpToSave.accessAccountUrl")
-    bindConfigString("microservice.services.company-auth-frontend.external-url")
-    bindConfigString("microservice.services.company-auth-frontend.sign-in.path")
   }
 
   private def bindConfigString(path: String): Unit = {

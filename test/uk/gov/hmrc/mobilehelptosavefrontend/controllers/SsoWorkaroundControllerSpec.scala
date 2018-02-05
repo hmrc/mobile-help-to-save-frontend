@@ -22,7 +22,7 @@ import play.api.mvc._
 import play.api.test.{DefaultAwaitTimeout, FakeRequest, FutureAwaits}
 import uk.gov.hmrc.auth.core.authorise.Predicate
 import uk.gov.hmrc.auth.core.retrieve.{Retrieval, Retrievals}
-import uk.gov.hmrc.auth.core.{AffinityGroup, AuthConnector}
+import uk.gov.hmrc.auth.core.{AffinityGroup, AuthConnector, NoActiveSession}
 import uk.gov.hmrc.http.{HeaderCarrier, SessionKeys}
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -80,5 +80,19 @@ class SsoWorkaroundControllerSpec extends WordSpec with Matchers with FutureAwai
       result.header.headers("Location") shouldBe redirectingToUrl
     }
 
+    "skip the affinityGroup workaround when it is not needed because the user is not logged in" in {
+      val fakeAuthConnector = new AuthConnector {
+        override def authorise[A](predicate: Predicate, retrieval: Retrieval[A])(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[A] =
+          Future failed new NoActiveSession("not logged in") {}
+      }
+      val controller = new SsoWorkaroundController(fakeAuthConnector,
+        invitationUrl = configuredInvitationUrl, accessAccountUrl = configuredAccessAccountUrl)
+      val action = getAction(controller)
+
+      val result: Result = await(action(FakeRequest()))
+
+      result.header.status shouldBe 303
+      result.header.headers("Location") shouldBe redirectingToUrl
+    }
   }
 }

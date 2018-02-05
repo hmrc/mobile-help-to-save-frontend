@@ -31,9 +31,7 @@ class SsoWorkaroundISpec extends WordSpec with Matchers with OptionValues
   override implicit lazy val app: Application = wireMockApplicationBuilder()
     .configure(
       "helpToSave.invitationUrl" -> configuredInvitationUrl,
-      "helpToSave.accessAccountUrl" -> configuredAccessAccountUrl,
-      "microservice.services.company-auth-frontend.external-url" -> "http://localhost:9025",
-      "microservice.services.company-auth-frontend.sign-in.path" -> "/gg/sign-in")
+      "helpToSave.accessAccountUrl" -> configuredAccessAccountUrl)
     .build()
 
   "GET /mobile-help-to-save" should {
@@ -45,22 +43,23 @@ class SsoWorkaroundISpec extends WordSpec with Matchers with OptionValues
   }
 
   private def anAuthenticatedRedirectEndpoint(withUrl: String, redirectingToUrl: String): Unit = {
-    "allow access if user is logged in" in {
+    "redirect when user is logged in" in {
       AuthStub.userIsLoggedIn()
       val response = await(wsUrl(withUrl)
         .withFollowRedirects(false)
         .get())
       response.status shouldBe 303
       response.header("Location").value shouldBe redirectingToUrl
+      //TODO see if we can check Play session here
     }
 
-    "redirect to sign in if user is not logged in" in {
+    "redirect even when user is not logged in (affinityGroup workaround not required)" in {
       AuthStub.userIsNotLoggedIn()
       val response = await(wsUrl(withUrl)
         .withFollowRedirects(false)
         .get())
       response.status shouldBe 303
-      response.header("Location").value shouldBe "http://localhost:9025/gg/sign-in"
+      response.header("Location").value shouldBe redirectingToUrl
     }
   }
 

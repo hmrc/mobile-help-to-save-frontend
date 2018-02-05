@@ -20,7 +20,7 @@ import javax.inject.{Inject, Named, Singleton}
 
 import play.api.mvc._
 import uk.gov.hmrc.auth.core.retrieve.Retrievals
-import uk.gov.hmrc.auth.core.{AffinityGroup, AuthConnector, AuthorisedFunctions}
+import uk.gov.hmrc.auth.core.{AffinityGroup, AuthConnector, AuthorisedFunctions, NoActiveSession}
 import uk.gov.hmrc.http.SessionKeys
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 
@@ -44,6 +44,9 @@ class SsoWorkaroundController @Inject()(
         Future successful redirect.addingToSession(SessionKeys.affinityGroup -> affinityGroup.toString)
       case None =>
         Future successful redirect.removingFromSession(SessionKeys.affinityGroup)
+    } recover {
+      case _: NoActiveSession =>
+        redirect
     }
   }
 
