@@ -18,7 +18,7 @@ package uk.gov.hmrc.mobilehelptosavefrontend.controllers
 
 import org.scalatest.{Matchers, WordSpec}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import play.api.mvc.{AnyContentAsEmpty, Request, Result}
+import play.api.mvc._
 import play.api.test.{DefaultAwaitTimeout, FakeRequest, FutureAwaits}
 import uk.gov.hmrc.auth.core.authorise.Predicate
 import uk.gov.hmrc.auth.core.retrieve.{Retrieval, Retrievals}
@@ -27,9 +27,21 @@ import uk.gov.hmrc.http.{HeaderCarrier, SessionKeys}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class AccessAccountSsoWorkaroundControllerSpec extends WordSpec with Matchers with FutureAwaits with DefaultAwaitTimeout with GuiceOneAppPerSuite {
+class SsoWorkaroundControllerSpec extends WordSpec with Matchers with FutureAwaits with DefaultAwaitTimeout with GuiceOneAppPerSuite {
+
+  private val configuredInvitationUrl = "/help-to-save"
+  private val configuredAccessAccountUrl = "/help-to-save/access-account"
+
+  "invitation" should {
+    behave like anSsoWorkaroundEndpoint(_.invitation, configuredInvitationUrl)
+  }
 
   "accessAccount" should {
+    behave like anSsoWorkaroundEndpoint(_.accessAccount, configuredAccessAccountUrl)
+  }
+
+  private def anSsoWorkaroundEndpoint(getAction: SsoWorkaroundController => Action[AnyContent], redirectingToUrl: String): Unit = {
+
     "retrieve affinityGroup from auth and copy it into the Play session" in {
       val fakeAuthConnector = new AuthConnector {
         override def authorise[A](predicate: Predicate, retrieval: Retrieval[A])(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[A] = retrieval match {
@@ -37,14 +49,16 @@ class AccessAccountSsoWorkaroundControllerSpec extends WordSpec with Matchers wi
           case _ => ???
         }
       }
-      val controller = new AccessAccountSsoWorkaroundController(fakeAuthConnector, "/help-to-save/access-account")
+      val controller = new SsoWorkaroundController(fakeAuthConnector,
+        invitationUrl = configuredInvitationUrl, accessAccountUrl = configuredAccessAccountUrl)
+      val action = getAction(controller)
 
       implicit val request: Request[AnyContentAsEmpty.type] = FakeRequest()
-      val result: Result = await(controller.accessAccount(request))
+      val result: Result = await(action(request))
       result.session.get(SessionKeys.affinityGroup) shouldBe Some("Individual")
 
       result.header.status shouldBe 303
-      result.header.headers("Location") shouldBe "/help-to-save/access-account"
+      result.header.headers("Location") shouldBe redirectingToUrl
     }
 
     "clear affinityGroup in play session when affinityGroup retrieved from auth is None" in {
@@ -54,15 +68,17 @@ class AccessAccountSsoWorkaroundControllerSpec extends WordSpec with Matchers wi
           case _ => ???
         }
       }
-      val controller = new AccessAccountSsoWorkaroundController(fakeAuthConnector, "/help-to-save/access-account")
+      val controller = new SsoWorkaroundController(fakeAuthConnector,
+        invitationUrl = configuredInvitationUrl, accessAccountUrl = configuredAccessAccountUrl)
+      val action = getAction(controller)
 
       implicit val request: Request[AnyContentAsEmpty.type] = FakeRequest().withSession(SessionKeys.affinityGroup -> "OldAffinityGroupInSession")
-      val result: Result = await(controller.accessAccount(request))
+      val result: Result = await(action(request))
       result.session.get(SessionKeys.affinityGroup) shouldBe None
 
       result.header.status shouldBe 303
-      result.header.headers("Location") shouldBe "/help-to-save/access-account"
+      result.header.headers("Location") shouldBe redirectingToUrl
     }
-  }
 
+  }
 }

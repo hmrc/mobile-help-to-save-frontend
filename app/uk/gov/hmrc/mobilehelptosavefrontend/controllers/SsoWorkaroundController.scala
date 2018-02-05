@@ -27,13 +27,18 @@ import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import scala.concurrent.Future
 
 @Singleton
-class AccessAccountSsoWorkaroundController @Inject()(
+class SsoWorkaroundController @Inject()(
   override val authConnector: AuthConnector,
+  @Named("helpToSave.invitationUrl") invitationUrl: String,
   @Named("helpToSave.accessAccountUrl") accessAccountUrl: String
 ) extends FrontendController with AuthorisedFunctions {
 
-  val accessAccount: Action[AnyContent] = Action.async { implicit request =>
-    val redirect = Redirect(accessAccountUrl)
+  val invitation: Action[AnyContent] = ssoWorkaround(invitationUrl)
+
+  val accessAccount: Action[AnyContent] = ssoWorkaround(accessAccountUrl)
+
+  private def ssoWorkaround(redirectToUrl: String) = Action.async { implicit request =>
+    val redirect = Redirect(redirectToUrl)
     authorised().retrieve(Retrievals.affinityGroup) {
       case Some(affinityGroup: AffinityGroup) =>
         Future successful redirect.addingToSession(SessionKeys.affinityGroup -> affinityGroup.toString)
