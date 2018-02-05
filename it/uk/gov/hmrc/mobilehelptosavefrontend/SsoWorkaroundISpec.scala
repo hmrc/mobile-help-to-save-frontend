@@ -18,9 +18,15 @@ package uk.gov.hmrc.mobilehelptosavefrontend
 
 import org.scalatest.{Matchers, OptionValues, WordSpec}
 import play.api.Application
+import play.api.http.HttpConfiguration
+import play.api.libs.ws.{WSCookie, WSResponse}
+import play.api.mvc.Session
 import play.api.test.{DefaultAwaitTimeout, FutureAwaits}
+import uk.gov.hmrc.crypto.Crypted
+import uk.gov.hmrc.http.SessionKeys
 import uk.gov.hmrc.mobilehelptosavefrontend.stubs.AuthStub
 import uk.gov.hmrc.mobilehelptosavefrontend.support.{OneServerPerSuiteWsClient, WireMockSupport}
+import uk.gov.hmrc.play.bootstrap.filters.frontend.crypto.SessionCookieCrypto
 
 class SsoWorkaroundISpec extends WordSpec with Matchers with OptionValues
   with FutureAwaits with DefaultAwaitTimeout
@@ -34,23 +40,26 @@ class SsoWorkaroundISpec extends WordSpec with Matchers with OptionValues
       "helpToSave.accessAccountUrl" -> configuredAccessAccountUrl)
     .build()
 
+  private lazy val sessionCrypto = app.injector.instanceOf[SessionCookieCrypto]
+  private lazy val httpConfiguration = app.injector.instanceOf[HttpConfiguration]
+
   "GET /mobile-help-to-save" should {
-    behave like anAuthenticatedRedirectEndpoint(withUrl = "/mobile-help-to-save", redirectingToUrl = configuredInvitationUrl)
+    behave like anSsoWorkaroundEndpoint(withUrl = "/mobile-help-to-save", redirectingToUrl = configuredInvitationUrl)
   }
 
   "GET /mobile-help-to-save/access-account" should {
-    behave like anAuthenticatedRedirectEndpoint(withUrl = "/mobile-help-to-save/access-account", redirectingToUrl = configuredAccessAccountUrl)
+    behave like anSsoWorkaroundEndpoint(withUrl = "/mobile-help-to-save/access-account", redirectingToUrl = configuredAccessAccountUrl)
   }
 
-  private def anAuthenticatedRedirectEndpoint(withUrl: String, redirectingToUrl: String): Unit = {
-    "redirect when user is logged in" in {
+  private def anSsoWorkaroundEndpoint(withUrl: String, redirectingToUrl: String): Unit = {
+    "redirect and add affinityGroup to session cookie when user is logged in" in {
       AuthStub.userIsLoggedIn()
       val response = await(wsUrl(withUrl)
         .withFollowRedirects(false)
         .get())
       response.status shouldBe 303
       response.header("Location").value shouldBe redirectingToUrl
-      //TODO see if we can check Play session here
+      playSession(response).get(SessionKeys.affinityGroup) shouldBe Some("Individual")
     }
 
     "redirect even when user is not logged in (affinityGroup workaround not required)" in {
@@ -61,6 +70,15 @@ class SsoWorkaroundISpec extends WordSpec with Matchers with OptionValues
       response.status shouldBe 303
       response.header("Location").value shouldBe redirectingToUrl
     }
+  }
+
+  private def playSession(response: WSResponse): Map[String, String] = {
+    def decryptSessionCookie(value: String): String = sessionCrypto.crypto.decrypt(Crypted(value)).value
+
+    val maybeSessionCookie: Option[WSCookie] = response.cookie(httpConfiguration.session.cookieName)
+    val maybeSessionData: Option[String] = maybeSessionCookie.flatMap(_.value.map(decryptSessionCookie))
+
+    maybeSessionData.map(Session.decode).getOrElse(Map.empty)
   }
 
 }
