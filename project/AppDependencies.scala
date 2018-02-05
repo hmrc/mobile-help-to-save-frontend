@@ -4,7 +4,8 @@ import sbt.{ModuleID, _}
 
 object AppDependencies {
 
-  lazy val appDependencies: Seq[ModuleID] = compile ++ test()
+  lazy val appDependencies: Seq[ModuleID] =
+    compile ++ test ++ integrationTest
 
   val compile = Seq(
     "uk.gov.hmrc" %% "govuk-template" % "5.18.0",
@@ -13,7 +14,13 @@ object AppDependencies {
     "uk.gov.hmrc" %% "bootstrap-play-25" % "1.3.0"
   )
 
-  def test(scope: String = "test") = Seq(
+  val test: Seq[ModuleID] = testCommon("test")
+
+  val integrationTest: Seq[ModuleID] = testCommon("it") ++ Seq(
+    "com.github.tomakehurst" % "wiremock" % "2.13.0" % "it"
+  )
+
+  def testCommon(scope: String) = Seq(
     "uk.gov.hmrc" %% "hmrctest" % "3.0.0" % scope,
     "org.scalatest" %% "scalatest" % "3.0.4" % scope,
     "org.scalatestplus.play" %% "scalatestplus-play" % "2.0.1" % scope,
