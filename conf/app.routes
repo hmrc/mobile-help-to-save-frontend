@@ -1,3 +1,4 @@
 # microservice specific routes
 
-GET        /hello-world             @uk.gov.hmrc.mobilehelptosavefrontend.controllers.HelloWorld.helloWorld
+GET        /                           uk.gov.hmrc.mobilehelptosavefrontend.controllers.SsoWorkaroundController.invitation
+GET        /access-account             uk.gov.hmrc.mobilehelptosavefrontend.controllers.SsoWorkaroundController.accessAccount

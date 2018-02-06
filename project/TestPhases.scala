@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2018 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,17 +12,15 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@import uk.gov.hmrc.mobilehelptosavefrontend.config.AppConfig
-@(pageTitle: String, heading: String, message: String)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+import sbt.Tests.{Group, SubProcess}
+import sbt.{ForkOptions, TestDefinition}
 
-@contentHeader = {
-  <h1>@heading</h1>
+object TestPhases {
+
+  def oneForkedJvmPerTest(tests: Seq[TestDefinition]): Seq[Group] =
+    tests map {
+      test => Group(test.name, Seq(test), SubProcess(ForkOptions(runJVMOptions = Seq("-Dtest.name=" + test.name))))
+    }
 }
-
-@mainContent = {
-  <p>@message</p>
-}
-
-@govuk_wrapper(appConfig = appConfig, title = pageTitle, contentHeader = Some(contentHeader), mainContent = mainContent)
