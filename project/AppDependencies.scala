@@ -11,7 +11,7 @@ object AppDependencies {
     "uk.gov.hmrc" %% "govuk-template" % "5.18.0",
     "uk.gov.hmrc" %% "play-ui" % "7.14.0",
     ws,
-    "uk.gov.hmrc" %% "bootstrap-play-25" % "1.5.0"
+    "uk.gov.hmrc" %% "bootstrap-play-25" % "1.6.0"
   )
 
   val test: Seq[ModuleID] = testCommon("test")
