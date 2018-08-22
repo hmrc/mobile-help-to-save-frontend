@@ -15,15 +15,41 @@
  */
 
 import TestPhases.oneForkedJvmPerTest
+import sbt.Keys.retrieveManaged
 import uk.gov.hmrc.DefaultBuildSettings.{addTestReportOption, defaultSettings, scalaSettings}
 import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin.publishingSettings
 
-name := "mobile-help-to-save-frontend"
+val appName = "mobile-help-to-save-frontend"
 
-lazy val root = (project in file("."))
+lazy val microservice = Project(appName, file("."))
   .enablePlugins(play.sbt.PlayScala, SbtAutoBuildPlugin, SbtGitVersioning, SbtDistributablesPlugin)
   .configs(IntegrationTest)
   .settings(inConfig(IntegrationTest)(Defaults.itSettings): _*)
+  .settings(scoverageSettings: _*)
+  .settings(scalaSettings: _*)
+  .settings(publishingSettings: _*)
+  .settings(defaultSettings(): _*)
+  .settings(
+    PlayKeys.playDefaultPort := 8249,
+    // from https://github.com/typelevel/cats/blob/master/README.md
+    scalacOptions += "-Ypartial-unification",
+    libraryDependencies ++= AppDependencies.appDependencies,
+    retrieveManaged := true,
+    evictionWarningOptions in update := EvictionWarningOptions.default.withWarnScalaVersionEviction(false),
+
+    unmanagedSourceDirectories in Test += baseDirectory.value / "testcommon",
+
+    Keys.fork in IntegrationTest := false,
+    unmanagedSourceDirectories in IntegrationTest := (baseDirectory in IntegrationTest) (base => Seq(base / "it")).value,
+    addTestReportOption(IntegrationTest, "int-test-reports"),
+    testGrouping in IntegrationTest := oneForkedJvmPerTest((definedTests in IntegrationTest).value),
+    parallelExecution in IntegrationTest := false,
+
+    resolvers ++= Seq(
+      Resolver.bintrayRepo("hmrc", "releases"),
+      Resolver.jcenterRepo
+    )
+  )
 
 lazy val scoverageSettings = {
   import scoverage.ScoverageKeys
@@ -36,30 +62,3 @@ lazy val scoverageSettings = {
     parallelExecution in Test := false
   )
 }
-
-scoverageSettings
-scalaSettings
-publishingSettings
-defaultSettings()
-
-PlayKeys.playDefaultPort := 8249
-
-// from https://github.com/typelevel/cats/blob/master/README.md
-scalacOptions += "-Ypartial-unification"
-
-libraryDependencies ++= AppDependencies.appDependencies
-retrieveManaged := true
-evictionWarningOptions in update := EvictionWarningOptions.default.withWarnScalaVersionEviction(false)
-
-unmanagedSourceDirectories in Test += baseDirectory.value / "testcommon"
-
-Keys.fork in IntegrationTest := false
-unmanagedSourceDirectories in IntegrationTest := (baseDirectory in IntegrationTest)(base => Seq(base / "it")).value
-addTestReportOption(IntegrationTest, "int-test-reports")
-testGrouping in IntegrationTest := oneForkedJvmPerTest((definedTests in IntegrationTest).value)
-parallelExecution in IntegrationTest := false
-
-resolvers ++= Seq(
-  Resolver.bintrayRepo("hmrc", "releases"),
-  Resolver.jcenterRepo
-)
