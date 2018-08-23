@@ -34,6 +34,7 @@ lazy val microservice = Project(appName, file("."))
     PlayKeys.playDefaultPort := 8249,
     // from https://github.com/typelevel/cats/blob/master/README.md
     scalacOptions += "-Ypartial-unification",
+    addCommandAlias("testAll", ";reload;test;it:test"),
     libraryDependencies ++= AppDependencies.appDependencies,
     retrieveManaged := true,
     evictionWarningOptions in update := EvictionWarningOptions.default.withWarnScalaVersionEviction(false),
