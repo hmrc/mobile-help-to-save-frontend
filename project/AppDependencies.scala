@@ -9,9 +9,9 @@ object AppDependencies {
 
   val compile = Seq(
     "uk.gov.hmrc" %% "govuk-template" % "5.18.0",
-    "uk.gov.hmrc" %% "play-ui" % "7.14.0",
+    "uk.gov.hmrc" %% "play-ui" % "7.22.0",
     ws,
-    "uk.gov.hmrc" %% "bootstrap-play-25" % "1.6.0"
+    "uk.gov.hmrc" %% "bootstrap-play-25" % "3.7.0"
   )
 
   val test: Seq[ModuleID] = testCommon("test")
@@ -21,7 +21,7 @@ object AppDependencies {
   )
 
   def testCommon(scope: String) = Seq(
-    "uk.gov.hmrc" %% "hmrctest" % "3.0.0" % scope,
+    "uk.gov.hmrc" %% "hmrctest" % "3.1.0" % scope,
     "org.scalatest" %% "scalatest" % "3.0.4" % scope,
     "org.scalatestplus.play" %% "scalatestplus-play" % "2.0.1" % scope,
     "org.pegdown" % "pegdown" % "1.6.0" % scope,
