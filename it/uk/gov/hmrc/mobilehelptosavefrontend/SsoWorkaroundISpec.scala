@@ -32,20 +32,13 @@ class SsoWorkaroundISpec extends WordSpec with Matchers with OptionValues
   with FutureAwaits with DefaultAwaitTimeout
   with WireMockSupport with OneServerPerSuiteWsClient {
 
-  private val configuredInvitationUrl = "http://example.com/test-help-to-save/invitation"
   private val configuredAccessAccountUrl = "http://example.com/test-help-to-save/access-account"
   override implicit lazy val app: Application = wireMockApplicationBuilder()
-    .configure(
-      "helpToSave.invitationUrl" -> configuredInvitationUrl,
-      "helpToSave.accessAccountUrl" -> configuredAccessAccountUrl)
-    .build()
+    .configure("helpToSave.accessAccountUrl" -> configuredAccessAccountUrl).build()
 
   private lazy val sessionCrypto = app.injector.instanceOf[SessionCookieCrypto]
   private lazy val httpConfiguration = app.injector.instanceOf[HttpConfiguration]
 
-  "GET /mobile-help-to-save" should {
-    behave like anSsoWorkaroundEndpoint(withUrl = "/mobile-help-to-save", redirectingToUrl = configuredInvitationUrl)
-  }
 
   "GET /mobile-help-to-save/access-account" should {
     behave like anSsoWorkaroundEndpoint(withUrl = "/mobile-help-to-save/access-account", redirectingToUrl = configuredAccessAccountUrl)

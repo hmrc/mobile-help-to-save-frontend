@@ -23,7 +23,6 @@ import play.api.{Configuration, Environment}
 class GuiceModule(environment: Environment, configuration: Configuration) extends AbstractModule {
 
   override def configure(): Unit = {
-    bindConfigString("helpToSave.invitationUrl")
     bindConfigString("helpToSave.accessAccountUrl")
   }
 

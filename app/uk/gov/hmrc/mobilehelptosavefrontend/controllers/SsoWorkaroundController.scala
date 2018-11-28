@@ -29,11 +29,8 @@ import scala.concurrent.Future
 @Singleton
 class SsoWorkaroundController @Inject()(
   override val authConnector: AuthConnector,
-  @Named("helpToSave.invitationUrl") invitationUrl: String,
   @Named("helpToSave.accessAccountUrl") accessAccountUrl: String
 ) extends FrontendController with AuthorisedFunctions {
-
-  val invitation: Action[AnyContent] = ssoWorkaround(invitationUrl)
 
   val accessAccount: Action[AnyContent] = ssoWorkaround(accessAccountUrl)
 
