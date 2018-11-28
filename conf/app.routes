@@ -1,4 +1,3 @@
 # microservice specific routes
 
-GET        /                           uk.gov.hmrc.mobilehelptosavefrontend.controllers.SsoWorkaroundController.invitation
 GET        /access-account             uk.gov.hmrc.mobilehelptosavefrontend.controllers.SsoWorkaroundController.accessAccount

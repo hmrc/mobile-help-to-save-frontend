@@ -29,12 +29,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class SsoWorkaroundControllerSpec extends WordSpec with Matchers with FutureAwaits with DefaultAwaitTimeout with GuiceOneAppPerSuite {
 
-  private val configuredInvitationUrl = "/help-to-save"
   private val configuredAccessAccountUrl = "/help-to-save/access-account"
-
-  "invitation" should {
-    behave like anSsoWorkaroundEndpoint(_.invitation, configuredInvitationUrl)
-  }
 
   "accessAccount" should {
     behave like anSsoWorkaroundEndpoint(_.accessAccount, configuredAccessAccountUrl)
@@ -49,8 +44,7 @@ class SsoWorkaroundControllerSpec extends WordSpec with Matchers with FutureAwai
           case _ => ???
         }
       }
-      val controller = new SsoWorkaroundController(fakeAuthConnector,
-        invitationUrl = configuredInvitationUrl, accessAccountUrl = configuredAccessAccountUrl)
+      val controller = new SsoWorkaroundController(fakeAuthConnector, accessAccountUrl = configuredAccessAccountUrl)
       val action = getAction(controller)
 
       implicit val request: Request[AnyContentAsEmpty.type] = FakeRequest()
@@ -68,8 +62,7 @@ class SsoWorkaroundControllerSpec extends WordSpec with Matchers with FutureAwai
           case _ => ???
         }
       }
-      val controller = new SsoWorkaroundController(fakeAuthConnector,
-        invitationUrl = configuredInvitationUrl, accessAccountUrl = configuredAccessAccountUrl)
+      val controller = new SsoWorkaroundController(fakeAuthConnector, accessAccountUrl = configuredAccessAccountUrl)
       val action = getAction(controller)
 
       implicit val request: Request[AnyContentAsEmpty.type] = FakeRequest().withSession(SessionKeys.affinityGroup -> "OldAffinityGroupInSession")
@@ -85,8 +78,7 @@ class SsoWorkaroundControllerSpec extends WordSpec with Matchers with FutureAwai
         override def authorise[A](predicate: Predicate, retrieval: Retrieval[A])(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[A] =
           Future failed new NoActiveSession("not logged in") {}
       }
-      val controller = new SsoWorkaroundController(fakeAuthConnector,
-        invitationUrl = configuredInvitationUrl, accessAccountUrl = configuredAccessAccountUrl)
+      val controller = new SsoWorkaroundController(fakeAuthConnector, accessAccountUrl = configuredAccessAccountUrl)
       val action = getAction(controller)
 
       val result: Result = await(action(FakeRequest()))
