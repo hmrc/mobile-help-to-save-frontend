@@ -37,6 +37,7 @@ lazy val microservice = Project(appName, file("."))
     scalacOptions += "-Ypartial-unification",
     addCommandAlias("testAll", ";reload;test;it:test"),
     libraryDependencies ++= AppDependencies.appDependencies,
+    dependencyOverrides ++= AppDependencies.overrides(),
     retrieveManaged := true,
     evictionWarningOptions in update := EvictionWarningOptions.default.withWarnScalaVersionEviction(false),
 
