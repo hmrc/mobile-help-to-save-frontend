@@ -17,25 +17,28 @@
 package uk.gov.hmrc.mobilehelptosavefrontend.controllers
 
 import javax.inject.{Inject, Named, Singleton}
-
 import play.api.mvc._
 import uk.gov.hmrc.auth.core.retrieve.Retrievals
 import uk.gov.hmrc.auth.core.{AffinityGroup, AuthConnector, AuthorisedFunctions, NoActiveSession}
 import uk.gov.hmrc.http.SessionKeys
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class SsoWorkaroundController @Inject()(
   override val authConnector: AuthConnector,
-  @Named("helpToSave.accessAccountUrl") accessAccountUrl: String
-) extends FrontendController with AuthorisedFunctions {
+  @Named("helpToSave.accessAccountUrl") accessAccountUrl: String,
+  override val controllerComponents: MessagesControllerComponents
+)(
+  implicit ec:ExecutionContext
+) extends FrontendController(controllerComponents) with AuthorisedFunctions {
 
   val accessAccount: Action[AnyContent] = ssoWorkaround(accessAccountUrl)
 
   private def ssoWorkaround(redirectToUrl: String) = Action.async { implicit request =>
-    val redirect = Redirect(redirectToUrl)
+    val redirect: Result = Redirect(redirectToUrl)
+
     authorised().retrieve(Retrievals.affinityGroup) {
       case Some(affinityGroup: AffinityGroup) =>
         Future successful redirect.addingToSession(SessionKeys.affinityGroup -> affinityGroup.toString)

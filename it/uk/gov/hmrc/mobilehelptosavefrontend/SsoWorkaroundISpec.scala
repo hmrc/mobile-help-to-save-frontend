@@ -28,17 +28,22 @@ import uk.gov.hmrc.mobilehelptosavefrontend.stubs.AuthStub
 import uk.gov.hmrc.mobilehelptosavefrontend.support.{OneServerPerSuiteWsClient, WireMockSupport}
 import uk.gov.hmrc.play.bootstrap.filters.frontend.crypto.SessionCookieCrypto
 
-class SsoWorkaroundISpec extends WordSpec with Matchers with OptionValues
-  with FutureAwaits with DefaultAwaitTimeout
-  with WireMockSupport with OneServerPerSuiteWsClient {
+class SsoWorkaroundISpec
+    extends WordSpec
+    with Matchers
+    with OptionValues
+    with FutureAwaits
+    with DefaultAwaitTimeout
+    with WireMockSupport
+    with OneServerPerSuiteWsClient {
 
   private val configuredAccessAccountUrl = "http://example.com/test-help-to-save/access-account"
   override implicit lazy val app: Application = wireMockApplicationBuilder()
-    .configure("helpToSave.accessAccountUrl" -> configuredAccessAccountUrl).build()
+    .configure("helpToSave.accessAccountUrl" -> configuredAccessAccountUrl)
+    .build()
 
-  private lazy val sessionCrypto = app.injector.instanceOf[SessionCookieCrypto]
+  private lazy val sessionCrypto     = app.injector.instanceOf[SessionCookieCrypto]
   private lazy val httpConfiguration = app.injector.instanceOf[HttpConfiguration]
-
 
   "GET /mobile-help-to-save/access-account" should {
     behave like anSsoWorkaroundEndpoint(withUrl = "/mobile-help-to-save/access-account", redirectingToUrl = configuredAccessAccountUrl)
@@ -47,20 +52,22 @@ class SsoWorkaroundISpec extends WordSpec with Matchers with OptionValues
   private def anSsoWorkaroundEndpoint(withUrl: String, redirectingToUrl: String): Unit = {
     "redirect and add affinityGroup to session cookie when user is logged in" in {
       AuthStub.userIsLoggedIn()
-      val response = await(wsUrl(withUrl)
-        .withFollowRedirects(false)
-        .get())
-      response.status shouldBe 303
-      response.header("Location").value shouldBe redirectingToUrl
+      val response = await(
+        wsUrl(withUrl)
+          .withFollowRedirects(false)
+          .get())
+      response.status                                      shouldBe 303
+      response.header("Location").value                    shouldBe redirectingToUrl
       playSession(response).get(SessionKeys.affinityGroup) shouldBe Some("Individual")
     }
 
     "redirect even when user is not logged in (affinityGroup workaround not required)" in {
       AuthStub.userIsNotLoggedIn()
-      val response = await(wsUrl(withUrl)
-        .withFollowRedirects(false)
-        .get())
-      response.status shouldBe 303
+      val response = await(
+        wsUrl(withUrl)
+          .withFollowRedirects(false)
+          .get())
+      response.status                   shouldBe 303
       response.header("Location").value shouldBe redirectingToUrl
     }
   }
@@ -69,7 +76,7 @@ class SsoWorkaroundISpec extends WordSpec with Matchers with OptionValues
     def decryptSessionCookie(value: String): String = sessionCrypto.crypto.decrypt(Crypted(value)).value
 
     val maybeSessionCookie: Option[WSCookie] = response.cookie(httpConfiguration.session.cookieName)
-    val maybeSessionData: Option[String] = maybeSessionCookie.flatMap(_.value.map(decryptSessionCookie))
+    val maybeSessionData:   Option[String]   = maybeSessionCookie.map(c => decryptSessionCookie(c.value))
 
     maybeSessionData.map(Session.decode).getOrElse(Map.empty)
   }
