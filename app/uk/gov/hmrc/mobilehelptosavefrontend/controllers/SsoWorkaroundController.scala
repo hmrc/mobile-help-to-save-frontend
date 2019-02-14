@@ -27,16 +27,19 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class SsoWorkaroundController @Inject()(
-  override val authConnector: AuthConnector,
+  override val authConnector:                             AuthConnector,
   @Named("helpToSave.accessAccountUrl") accessAccountUrl: String,
-  override val controllerComponents: MessagesControllerComponents
+  @Named("helpToSave.accountPayInUrl") accountPayInUrl:   String,
+  override val controllerComponents:                      MessagesControllerComponents
 )(
-  implicit ec:ExecutionContext
-) extends FrontendController(controllerComponents) with AuthorisedFunctions {
+  implicit ec: ExecutionContext
+) extends FrontendController(controllerComponents)
+    with AuthorisedFunctions {
 
   val accessAccount: Action[AnyContent] = ssoWorkaround(accessAccountUrl)
+  val payIn:         Action[AnyContent] = ssoWorkaround(accountPayInUrl)
 
-  private def ssoWorkaround(redirectToUrl: String) = Action.async { implicit request =>
+  private def ssoWorkaround(redirectToUrl: String): Action[AnyContent] = Action.async { implicit request =>
     val redirect: Result = Redirect(redirectToUrl)
 
     authorised().retrieve(Retrievals.affinityGroup) {
