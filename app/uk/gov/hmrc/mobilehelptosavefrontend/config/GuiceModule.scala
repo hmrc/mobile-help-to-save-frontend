@@ -24,6 +24,7 @@ class GuiceModule(environment: Environment, configuration: Configuration) extend
 
   override def configure(): Unit = {
     bindConfigString("helpToSave.accessAccountUrl")
+    bindConfigString("helpToSave.accountPayInUrl")
   }
 
   private def bindConfigString(path: String): Unit = {

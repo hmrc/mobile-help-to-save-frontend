@@ -31,6 +31,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class SsoWorkaroundControllerSpec extends WordSpec with Matchers with FutureAwaits with DefaultAwaitTimeout {
 
   private val configuredAccessAccountUrl = "/help-to-save/access-account"
+  private val configuredAccountPayInUrl  = "/help-to-save/access-account"
 
   private val messagesActionBuilder: MessagesActionBuilder = new DefaultMessagesActionBuilderImpl(stubBodyParser[AnyContent](), stubMessagesApi())
   private val cc = stubControllerComponents()
@@ -60,8 +61,12 @@ class SsoWorkaroundControllerSpec extends WordSpec with Matchers with FutureAwai
           }
       }
 
-      val controller = new SsoWorkaroundController(fakeAuthConnector, accessAccountUrl = configuredAccessAccountUrl, mcc)
-      val action     = getAction(controller)
+      val controller = new SsoWorkaroundController(
+        fakeAuthConnector,
+        accessAccountUrl = configuredAccessAccountUrl,
+        accountPayInUrl  = configuredAccountPayInUrl,
+        mcc)
+      val action = getAction(controller)
 
       implicit val request: Request[AnyContentAsEmpty.type] = FakeRequest()
       val result:           Result                          = await(action(request))
@@ -79,8 +84,12 @@ class SsoWorkaroundControllerSpec extends WordSpec with Matchers with FutureAwai
             case _                        => ???
           }
       }
-      val controller = new SsoWorkaroundController(fakeAuthConnector, accessAccountUrl = configuredAccessAccountUrl, mcc)
-      val action     = getAction(controller)
+      val controller = new SsoWorkaroundController(
+        fakeAuthConnector,
+        accessAccountUrl = configuredAccessAccountUrl,
+        accountPayInUrl  = configuredAccountPayInUrl,
+        mcc)
+      val action = getAction(controller)
 
       implicit val request: Request[AnyContentAsEmpty.type] = FakeRequest().withSession(SessionKeys.affinityGroup -> "OldAffinityGroupInSession")
       val result:           Result                          = await(action(request))
@@ -95,8 +104,12 @@ class SsoWorkaroundControllerSpec extends WordSpec with Matchers with FutureAwai
         override def authorise[A](predicate: Predicate, retrieval: Retrieval[A])(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[A] =
           Future failed new NoActiveSession("not logged in") {}
       }
-      val controller = new SsoWorkaroundController(fakeAuthConnector, accessAccountUrl = configuredAccessAccountUrl, mcc)
-      val action     = getAction(controller)
+      val controller = new SsoWorkaroundController(
+        fakeAuthConnector,
+        accessAccountUrl = configuredAccessAccountUrl,
+        accountPayInUrl  = configuredAccountPayInUrl,
+        mcc)
+      val action = getAction(controller)
 
       val result: Result = await(action(FakeRequest()))
 
