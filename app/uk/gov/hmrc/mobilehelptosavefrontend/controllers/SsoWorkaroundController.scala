@@ -30,6 +30,7 @@ class SsoWorkaroundController @Inject()(
   override val authConnector:                             AuthConnector,
   @Named("helpToSave.accessAccountUrl") accessAccountUrl: String,
   @Named("helpToSave.accountPayInUrl") accountPayInUrl:   String,
+  @Named("helpToSave.infoUrl") infoUrl:                   String,
   override val controllerComponents:                      MessagesControllerComponents
 )(
   implicit ec: ExecutionContext
@@ -38,6 +39,7 @@ class SsoWorkaroundController @Inject()(
 
   val accessAccount: Action[AnyContent] = ssoWorkaround(accessAccountUrl)
   val payIn:         Action[AnyContent] = ssoWorkaround(accountPayInUrl)
+  val info:          Action[AnyContent] = ssoWorkaround(infoUrl)
 
   private def ssoWorkaround(redirectToUrl: String): Action[AnyContent] = Action.async { implicit request =>
     val redirect: Result = Redirect(redirectToUrl)

@@ -31,7 +31,8 @@ import scala.concurrent.{ExecutionContext, Future}
 class SsoWorkaroundControllerSpec extends WordSpec with Matchers with FutureAwaits with DefaultAwaitTimeout {
 
   private val configuredAccessAccountUrl = "/help-to-save/access-account"
-  private val configuredAccountPayInUrl  = "/help-to-save/access-account"
+  private val configuredAccountPayInUrl  = "/help-to-save/pay-in"
+  private val configuredInfoUrl          = "/help-to-save/info"
 
   private val messagesActionBuilder: MessagesActionBuilder = new DefaultMessagesActionBuilderImpl(stubBodyParser[AnyContent](), stubMessagesApi())
   private val cc = stubControllerComponents()
@@ -65,6 +66,7 @@ class SsoWorkaroundControllerSpec extends WordSpec with Matchers with FutureAwai
         fakeAuthConnector,
         accessAccountUrl = configuredAccessAccountUrl,
         accountPayInUrl  = configuredAccountPayInUrl,
+        infoUrl          = configuredInfoUrl,
         mcc)
       val action = getAction(controller)
 
@@ -88,6 +90,7 @@ class SsoWorkaroundControllerSpec extends WordSpec with Matchers with FutureAwai
         fakeAuthConnector,
         accessAccountUrl = configuredAccessAccountUrl,
         accountPayInUrl  = configuredAccountPayInUrl,
+        infoUrl          = configuredInfoUrl,
         mcc)
       val action = getAction(controller)
 
@@ -108,6 +111,7 @@ class SsoWorkaroundControllerSpec extends WordSpec with Matchers with FutureAwai
         fakeAuthConnector,
         accessAccountUrl = configuredAccessAccountUrl,
         accountPayInUrl  = configuredAccountPayInUrl,
+        infoUrl          = configuredInfoUrl,
         mcc)
       val action = getAction(controller)
 

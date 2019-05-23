@@ -39,10 +39,12 @@ class SsoWorkaroundISpec
 
   private val configuredAccessAccountUrl = "http://example.com/test-help-to-save/access-account"
   private val configuredAccountPayInUrl  = "http://example.com/test-help-to-save/pay-in"
+  private val configuredInfoUrl          = "http://example.com/test-help-to-save/info"
 
   override implicit lazy val app: Application = wireMockApplicationBuilder()
     .configure("helpToSave.accessAccountUrl" -> configuredAccessAccountUrl)
-    .configure("helpToSave.accountPayInUrl" -> configuredAccountPayInUrl)
+    .configure("helpToSave.accountPayInUrl"  -> configuredAccountPayInUrl)
+    .configure("helpToSave.infoUrl"          -> configuredInfoUrl)
     .build()
 
   private lazy val sessionCrypto     = app.injector.instanceOf[SessionCookieCrypto]
@@ -54,6 +56,10 @@ class SsoWorkaroundISpec
 
   "GET /mobile-help-to-save/pay-in" should {
     behave like anSsoWorkaroundEndpoint(withUrl = "/mobile-help-to-save/pay-in", redirectingToUrl = configuredAccountPayInUrl)
+  }
+
+  "GET /mobile-help-to-save/info" should {
+    behave like anSsoWorkaroundEndpoint(withUrl = "/mobile-help-to-save/info", redirectingToUrl = configuredInfoUrl)
   }
 
   private def anSsoWorkaroundEndpoint(withUrl: String, redirectingToUrl: String): Unit = {
