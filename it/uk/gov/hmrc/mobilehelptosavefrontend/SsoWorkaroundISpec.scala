@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 HM Revenue & Customs
+ * Copyright 20208 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import play.api.http.HttpConfiguration
 import play.api.libs.ws.{WSCookie, WSResponse}
 import play.api.mvc.Session
 import play.api.test.{DefaultAwaitTimeout, FutureAwaits}
+import uk.gov.hmrc.crypto.Crypted
 import uk.gov.hmrc.http.SessionKeys
 import uk.gov.hmrc.mobilehelptosavefrontend.stubs.AuthStub
 import uk.gov.hmrc.mobilehelptosavefrontend.support.{OneServerPerSuiteWsClient, WireMockSupport}
