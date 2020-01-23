@@ -18,10 +18,6 @@ package uk.gov.hmrc.mobilehelptosavefrontend.support
 
 import java.net.URL
 
-import com.github.tomakehurst.wiremock.WireMockServer
-import com.github.tomakehurst.wiremock.client.WireMock.{configureFor, reset}
-import com.github.tomakehurst.wiremock.core.WireMockConfiguration
-import com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig
 import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach, Suite}
 import play.api.inject.guice.GuiceApplicationBuilder
 

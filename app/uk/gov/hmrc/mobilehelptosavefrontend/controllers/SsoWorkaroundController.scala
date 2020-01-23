@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 HM Revenue & Customs
+ * Copyright 2020 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ package uk.gov.hmrc.mobilehelptosavefrontend.controllers
 
 import javax.inject.{Inject, Named, Singleton}
 import play.api.mvc._
-import uk.gov.hmrc.auth.core.retrieve.Retrievals
+import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.auth.core.{AffinityGroup, AuthConnector, AuthorisedFunctions, NoActiveSession}
 import uk.gov.hmrc.http.SessionKeys
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
@@ -26,15 +26,14 @@ import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class SsoWorkaroundController @Inject()(
+class SsoWorkaroundController @Inject() (
   override val authConnector:                             AuthConnector,
   @Named("helpToSave.accessAccountUrl") accessAccountUrl: String,
   @Named("helpToSave.accountPayInUrl") accountPayInUrl:   String,
   @Named("helpToSave.infoUrl") infoUrl:                   String,
   override val controllerComponents:                      MessagesControllerComponents
-)(
-  implicit ec: ExecutionContext
-) extends FrontendController(controllerComponents)
+)(implicit ec:                                            ExecutionContext)
+    extends FrontendController(controllerComponents)
     with AuthorisedFunctions {
 
   val accessAccount: Action[AnyContent] = ssoWorkaround(accessAccountUrl)
