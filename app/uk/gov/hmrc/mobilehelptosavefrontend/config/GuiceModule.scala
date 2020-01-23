@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 HM Revenue & Customs
+ * Copyright 2020 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,10 @@ import com.google.inject.AbstractModule
 import com.google.inject.name.Names.named
 import play.api.{Configuration, Environment}
 
-class GuiceModule(environment: Environment, configuration: Configuration) extends AbstractModule {
+class GuiceModule(
+  environment:   Environment,
+  configuration: Configuration)
+    extends AbstractModule {
 
   override def configure(): Unit = {
     bindConfigString("helpToSave.accessAccountUrl")
@@ -28,8 +31,7 @@ class GuiceModule(environment: Environment, configuration: Configuration) extend
     bindConfigString("helpToSave.infoUrl")
   }
 
-  private def bindConfigString(path: String): Unit = {
+  private def bindConfigString(path: String): Unit =
     bindConstant().annotatedWith(named(path)).to(configuration.underlying.getString(path))
-  }
 
 }

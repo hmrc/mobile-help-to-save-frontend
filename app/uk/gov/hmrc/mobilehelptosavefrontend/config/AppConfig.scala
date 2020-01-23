@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 HM Revenue & Customs
+ * Copyright 2020 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,9 @@ import javax.inject.{Inject, Singleton}
 import play.api.{Configuration, Environment}
 
 @Singleton
-class AppConfig @Inject()(val runModeConfiguration: Configuration, environment: Environment) {
+class AppConfig @Inject() (
+  val runModeConfiguration: Configuration,
+  environment:              Environment) {
 
   private def loadConfig(key: String) =
     runModeConfiguration.getOptional[String](key).getOrElse(throw new Exception(s"Missing configuration key: $key"))

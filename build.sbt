@@ -27,7 +27,7 @@ lazy val microservice = Project(appName, file("."))
   .settings(inConfig(IntegrationTest)(Defaults.itSettings): _*)
   .settings(scoverageSettings: _*)
   .settings(scalaSettings: _*)
-  .settings(scalaVersion := "2.11.12")
+  .settings(scalaVersion := "2.12.8")
   .settings(publishingSettings: _*)
   .settings(defaultSettings(): _*)
   .settings(
@@ -59,7 +59,7 @@ lazy val scoverageSettings = {
   import scoverage.ScoverageKeys
   Seq(
     // Semicolon-separated list of regexs matching classes to exclude
-    ScoverageKeys.coverageExcludedPackages := """uk\.gov\.hmrc\.BuildInfo;.*\.Routes;.*\.RoutesPrefix;.*\.Reverse[^.]*""",
+    ScoverageKeys.coverageExcludedPackages := """uk\.gov\.hmrc\.BuildInfo;.*\.Routes;.*\.RoutesPrefix;.*\.error_template;.*\.govuk_wrapper;.*\.Reverse[^.]*""",
     ScoverageKeys.coverageMinimum := 80.00,
     ScoverageKeys.coverageFailOnMinimum := false,
     ScoverageKeys.coverageHighlighting := true,

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 HM Revenue & Customs
+ * Copyright 2020 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,7 +34,8 @@ class SsoWorkaroundControllerSpec extends WordSpec with Matchers with FutureAwai
   private val configuredAccountPayInUrl  = "/help-to-save/pay-in"
   private val configuredInfoUrl          = "/help-to-save/info"
 
-  private val messagesActionBuilder: MessagesActionBuilder = new DefaultMessagesActionBuilderImpl(stubBodyParser[AnyContent](), stubMessagesApi())
+  private val messagesActionBuilder: MessagesActionBuilder =
+    new DefaultMessagesActionBuilderImpl(stubBodyParser[AnyContent](), stubMessagesApi())
   private val cc = stubControllerComponents()
 
   private val mcc: MessagesControllerComponents = DefaultMessagesControllerComponents(
@@ -51,23 +52,30 @@ class SsoWorkaroundControllerSpec extends WordSpec with Matchers with FutureAwai
     behave like anSsoWorkaroundEndpoint(_.accessAccount, configuredAccessAccountUrl)
   }
 
-  private def anSsoWorkaroundEndpoint(getAction: SsoWorkaroundController => Action[AnyContent], redirectingToUrl: String): Unit = {
+  private def anSsoWorkaroundEndpoint(
+    getAction:        SsoWorkaroundController => Action[AnyContent],
+    redirectingToUrl: String
+  ): Unit = {
 
     "retrieve affinityGroup from auth and copy it into the Play session" in {
       val fakeAuthConnector = new AuthConnector {
-        override def authorise[A](predicate: Predicate, retrieval: Retrieval[A])(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[A] =
+        override def authorise[A](
+          predicate:   Predicate,
+          retrieval:   Retrieval[A]
+        )(implicit hc: HeaderCarrier,
+          ec:          ExecutionContext
+        ): Future[A] =
           retrieval match {
             case Retrievals.affinityGroup => Future successful Some(AffinityGroup.Individual).asInstanceOf[A]
             case _                        => ???
           }
       }
 
-      val controller = new SsoWorkaroundController(
-        fakeAuthConnector,
-        accessAccountUrl = configuredAccessAccountUrl,
-        accountPayInUrl  = configuredAccountPayInUrl,
-        infoUrl          = configuredInfoUrl,
-        mcc)
+      val controller = new SsoWorkaroundController(fakeAuthConnector,
+                                                   accessAccountUrl = configuredAccessAccountUrl,
+                                                   accountPayInUrl  = configuredAccountPayInUrl,
+                                                   infoUrl          = configuredInfoUrl,
+                                                   mcc)
       val action = getAction(controller)
 
       implicit val request: Request[AnyContentAsEmpty.type] = FakeRequest()
@@ -80,22 +88,27 @@ class SsoWorkaroundControllerSpec extends WordSpec with Matchers with FutureAwai
 
     "clear affinityGroup in play session when affinityGroup retrieved from auth is None" in {
       val fakeAuthConnector = new AuthConnector {
-        override def authorise[A](predicate: Predicate, retrieval: Retrieval[A])(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[A] =
+        override def authorise[A](
+          predicate:   Predicate,
+          retrieval:   Retrieval[A]
+        )(implicit hc: HeaderCarrier,
+          ec:          ExecutionContext
+        ): Future[A] =
           retrieval match {
             case Retrievals.affinityGroup => Future successful None.asInstanceOf[A]
             case _                        => ???
           }
       }
-      val controller = new SsoWorkaroundController(
-        fakeAuthConnector,
-        accessAccountUrl = configuredAccessAccountUrl,
-        accountPayInUrl  = configuredAccountPayInUrl,
-        infoUrl          = configuredInfoUrl,
-        mcc)
+      val controller = new SsoWorkaroundController(fakeAuthConnector,
+                                                   accessAccountUrl = configuredAccessAccountUrl,
+                                                   accountPayInUrl  = configuredAccountPayInUrl,
+                                                   infoUrl          = configuredInfoUrl,
+                                                   mcc)
       val action = getAction(controller)
 
-      implicit val request: Request[AnyContentAsEmpty.type] = FakeRequest().withSession(SessionKeys.affinityGroup -> "OldAffinityGroupInSession")
-      val result:           Result                          = await(action(request))
+      implicit val request: Request[AnyContentAsEmpty.type] =
+        FakeRequest().withSession(SessionKeys.affinityGroup -> "OldAffinityGroupInSession")
+      val result: Result = await(action(request))
       result.session.get(SessionKeys.affinityGroup) shouldBe None
 
       result.header.status              shouldBe 303
@@ -104,15 +117,19 @@ class SsoWorkaroundControllerSpec extends WordSpec with Matchers with FutureAwai
 
     "skip the affinityGroup workaround when it is not needed because the user is not logged in" in {
       val fakeAuthConnector = new AuthConnector {
-        override def authorise[A](predicate: Predicate, retrieval: Retrieval[A])(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[A] =
+        override def authorise[A](
+          predicate:   Predicate,
+          retrieval:   Retrieval[A]
+        )(implicit hc: HeaderCarrier,
+          ec:          ExecutionContext
+        ): Future[A] =
           Future failed new NoActiveSession("not logged in") {}
       }
-      val controller = new SsoWorkaroundController(
-        fakeAuthConnector,
-        accessAccountUrl = configuredAccessAccountUrl,
-        accountPayInUrl  = configuredAccountPayInUrl,
-        infoUrl          = configuredInfoUrl,
-        mcc)
+      val controller = new SsoWorkaroundController(fakeAuthConnector,
+                                                   accessAccountUrl = configuredAccessAccountUrl,
+                                                   accountPayInUrl  = configuredAccountPayInUrl,
+                                                   infoUrl          = configuredInfoUrl,
+                                                   mcc)
       val action = getAction(controller)
 
       val result: Result = await(action(FakeRequest()))

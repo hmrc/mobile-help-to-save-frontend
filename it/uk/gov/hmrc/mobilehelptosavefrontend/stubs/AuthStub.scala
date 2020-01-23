@@ -16,33 +16,38 @@
 
 package uk.gov.hmrc.mobilehelptosavefrontend.stubs
 
-import com.github.tomakehurst.wiremock.client.WireMock._
 import play.api.libs.json.Json
 
 object AuthStub {
+
   def userIsLoggedIn(): Unit =
-    stubFor(post(urlPathEqualTo("/auth/authorise"))
-      .withRequestBody(equalToJson(
-        """{
-          |	"authorise": [],
-          |	"retrieve": ["affinityGroup"]
-          |}""".stripMargin))
-      .willReturn(aResponse()
-        .withStatus(200)
-        .withBody(
-          Json.obj("affinityGroup" -> "Individual").toString
-        )))
+    stubFor(
+      post(urlPathEqualTo("/auth/authorise"))
+        .withRequestBody(equalToJson("""{
+                                       |	"authorise": [],
+                                       |	"retrieve": ["affinityGroup"]
+                                       |}""".stripMargin))
+        .willReturn(
+          aResponse()
+            .withStatus(200)
+            .withBody(
+              Json.obj("affinityGroup" -> "Individual").toString
+            )
+        )
+    )
 
   def userIsNotLoggedIn(): Unit =
-    stubFor(post(urlPathEqualTo("/auth/authorise"))
-      .withRequestBody(equalToJson(
-        """{
-          |	"authorise": [],
-          |	"retrieve": ["affinityGroup"]
-          |}""".stripMargin))
-      .willReturn(aResponse()
-        .withStatus(401)
-          .withHeader("WWW-Authenticate", """MDTP detail="MissingBearerToken"""")
-      ))
+    stubFor(
+      post(urlPathEqualTo("/auth/authorise"))
+        .withRequestBody(equalToJson("""{
+                                       |	"authorise": [],
+                                       |	"retrieve": ["affinityGroup"]
+                                       |}""".stripMargin))
+        .willReturn(
+          aResponse()
+            .withStatus(401)
+            .withHeader("WWW-Authenticate", """MDTP detail="MissingBearerToken"""")
+        )
+    )
 
 }
