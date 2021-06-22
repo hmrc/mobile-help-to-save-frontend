@@ -19,14 +19,10 @@ package uk.gov.hmrc.mobilehelptosavefrontend
 import org.scalatest.{Matchers, OptionValues, WordSpec}
 import play.api.Application
 import play.api.http.HttpConfiguration
-import play.api.libs.ws.{WSCookie, WSResponse}
-import play.api.mvc.Session
 import play.api.test.{DefaultAwaitTimeout, FutureAwaits}
-import uk.gov.hmrc.crypto.Crypted
-import uk.gov.hmrc.http.SessionKeys
 import uk.gov.hmrc.mobilehelptosavefrontend.stubs.AuthStub
 import uk.gov.hmrc.mobilehelptosavefrontend.support.{OneServerPerSuiteWsClient, WireMockSupport}
-import uk.gov.hmrc.play.bootstrap.filters.frontend.crypto.SessionCookieCrypto
+import uk.gov.hmrc.play.bootstrap.frontend.filters.crypto.SessionCookieCrypto
 
 class SsoWorkaroundISpec
     extends WordSpec
@@ -77,7 +73,6 @@ class SsoWorkaroundISpec
       )
       response.status                                      shouldBe 303
       response.header("Location").value                    shouldBe redirectingToUrl
-      playSession(response).get(SessionKeys.affinityGroup) shouldBe Some("Individual")
     }
 
     "redirect even when user is not logged in (affinityGroup workaround not required)" in {
@@ -90,15 +85,6 @@ class SsoWorkaroundISpec
       response.status                   shouldBe 303
       response.header("Location").value shouldBe redirectingToUrl
     }
-  }
-
-  private def playSession(response: WSResponse): Map[String, String] = {
-    def decryptSessionCookie(value: String): String = sessionCrypto.crypto.decrypt(Crypted(value)).value
-
-    val maybeSessionCookie: Option[WSCookie] = response.cookie(httpConfiguration.session.cookieName)
-    val maybeSessionData:   Option[String]   = maybeSessionCookie.map(c => decryptSessionCookie(c.value))
-
-    maybeSessionData.map(Session.decode).getOrElse(Map.empty)
   }
 
 }

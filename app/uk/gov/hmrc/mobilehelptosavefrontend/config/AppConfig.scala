@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,15 +24,9 @@ class AppConfig @Inject() (
   val runModeConfiguration: Configuration,
   environment:              Environment) {
 
-  private def loadConfig(key: String) =
-    runModeConfiguration.getOptional[String](key).getOrElse(throw new Exception(s"Missing configuration key: $key"))
-
   private val contactHost                  = runModeConfiguration.getOptional[String](s"contact-frontend.host").getOrElse("")
   private val contactFormServiceIdentifier = "MyService"
 
-  lazy val assetsPrefix             = loadConfig(s"assets.url") + loadConfig(s"assets.version")
-  lazy val analyticsToken           = loadConfig(s"google-analytics.token")
-  lazy val analyticsHost            = loadConfig(s"google-analytics.host")
   lazy val reportAProblemPartialUrl = s"$contactHost/contact/problem_reports_ajax?service=$contactFormServiceIdentifier"
   lazy val reportAProblemNonJSUrl   = s"$contactHost/contact/problem_reports_nonjs?service=$contactFormServiceIdentifier"
 }

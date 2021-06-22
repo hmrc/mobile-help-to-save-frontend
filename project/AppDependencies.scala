@@ -4,14 +4,13 @@ import sbt.{ModuleID, _}
 
 object AppDependencies {
 
-  private val play26Bootstrap      = "1.3.0"
-  private val govUkTemplateVersion = "5.48.0-play-26"
-  private val playUiVersion        = "8.7.0-play-26"
+  private val play27Bootstrap      = "5.4.0"
+  private val govUkTemplateVersion = "5.68.0-play-27"
+  private val playUiVersion        = "9.6.0-play-27"
 
   private val pegdownVersion       = "1.6.0"
   private val wireMockVersion      = "2.21.0"
-  private val scalaTestVersion     = "3.0.5"
-  private val scalaTestPlusVersion = "3.1.2"
+  private val scalaTestPlusVersion = "4.0.3"
 
   lazy val appDependencies: Seq[ModuleID] =
     compile ++ test ++ integrationTest
@@ -20,20 +19,19 @@ object AppDependencies {
     "uk.gov.hmrc" %% "govuk-template" % govUkTemplateVersion,
     "uk.gov.hmrc" %% "play-ui"        % playUiVersion,
     ws,
-    "uk.gov.hmrc" %% "bootstrap-play-26" % play26Bootstrap
+    "uk.gov.hmrc" %% "bootstrap-frontend-play-27" % play27Bootstrap
   )
 
   val test: Seq[ModuleID] = testCommon("test")
 
   val integrationTest: Seq[ModuleID] = testCommon("it") ++ Seq(
-      "com.github.tomakehurst" % "wiremock"            % wireMockVersion      % "it",
-      "org.scalatestplus.play" %% "scalatestplus-play" % scalaTestPlusVersion % "it",
-      "com.typesafe.play"      %% "play-test"          % PlayVersion.current  % "it"
+      "com.github.tomakehurst" % "wiremock"   % wireMockVersion     % "it",
+      "com.typesafe.play"      %% "play-test" % PlayVersion.current % "it"
     )
 
   def testCommon(scope: String) = Seq(
-    "org.scalatest" %% "scalatest" % scalaTestVersion % scope,
-    "org.pegdown"   % "pegdown"    % pegdownVersion   % scope
+    "org.pegdown"            % "pegdown"             % pegdownVersion       % scope,
+    "org.scalatestplus.play" %% "scalatestplus-play" % scalaTestPlusVersion % scope
   )
 
   // Transitive dependencies in scalatest/scalatestplusplay drag in a newer version of jetty that is not

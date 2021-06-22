@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,10 +18,8 @@ package uk.gov.hmrc.mobilehelptosavefrontend.controllers
 
 import javax.inject.{Inject, Named, Singleton}
 import play.api.mvc._
-import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
-import uk.gov.hmrc.auth.core.{AffinityGroup, AuthConnector, AuthorisedFunctions, NoActiveSession}
-import uk.gov.hmrc.http.SessionKeys
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import uk.gov.hmrc.auth.core.{AuthConnector, AuthorisedFunctions, NoActiveSession}
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -41,17 +39,7 @@ class SsoWorkaroundController @Inject() (
   val info:          Action[AnyContent] = ssoWorkaround(infoUrl)
 
   private def ssoWorkaround(redirectToUrl: String): Action[AnyContent] = Action.async { implicit request =>
-    val redirect: Result = Redirect(redirectToUrl)
-
-    authorised().retrieve(Retrievals.affinityGroup) {
-      case Some(affinityGroup: AffinityGroup) =>
-        Future successful redirect.addingToSession(SessionKeys.affinityGroup -> affinityGroup.toString)
-      case None =>
-        Future successful redirect.removingFromSession(SessionKeys.affinityGroup)
-    } recover {
-      case _: NoActiveSession =>
-        redirect
-    }
+    Future successful Redirect(redirectToUrl)
   }
 
 }
