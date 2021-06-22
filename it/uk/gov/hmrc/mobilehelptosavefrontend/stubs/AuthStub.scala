@@ -16,8 +16,8 @@
 
 package uk.gov.hmrc.mobilehelptosavefrontend.stubs
 
-import com.github.tomakehurst.wiremock.client.WireMock._
-import play.api.libs.json.Json
+import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, equalToJson, post, stubFor, urlPathEqualTo}
+
 
 object AuthStub {
 
@@ -25,15 +25,11 @@ object AuthStub {
     stubFor(
       post(urlPathEqualTo("/auth/authorise"))
         .withRequestBody(equalToJson("""{
-                                       |	"authorise": [],
-                                       |	"retrieve": ["affinityGroup"]
+                                       |	"authorise": []
                                        |}""".stripMargin))
         .willReturn(
           aResponse()
             .withStatus(200)
-            .withBody(
-              Json.obj("affinityGroup" -> "Individual").toString
-            )
         )
     )
 
@@ -41,8 +37,7 @@ object AuthStub {
     stubFor(
       post(urlPathEqualTo("/auth/authorise"))
         .withRequestBody(equalToJson("""{
-                                       |	"authorise": [],
-                                       |	"retrieve": ["affinityGroup"]
+                                       |	"authorise": []
                                        |}""".stripMargin))
         .willReturn(
           aResponse()

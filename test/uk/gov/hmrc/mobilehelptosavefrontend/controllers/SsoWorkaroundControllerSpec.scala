@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,9 +21,10 @@ import play.api.mvc._
 import play.api.test.Helpers._
 import play.api.test.{DefaultAwaitTimeout, FakeRequest, FutureAwaits}
 import uk.gov.hmrc.auth.core.authorise.Predicate
-import uk.gov.hmrc.auth.core.retrieve.{Retrieval, Retrievals}
+import uk.gov.hmrc.auth.core.retrieve.Retrieval
+import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.auth.core.{AffinityGroup, AuthConnector, NoActiveSession}
-import uk.gov.hmrc.http.{HeaderCarrier, SessionKeys}
+import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ExecutionContext, Future}
@@ -57,7 +58,7 @@ class SsoWorkaroundControllerSpec extends WordSpec with Matchers with FutureAwai
     redirectingToUrl: String
   ): Unit = {
 
-    "retrieve affinityGroup from auth and copy it into the Play session" in {
+    "redirect to url successfully" in {
       val fakeAuthConnector = new AuthConnector {
         override def authorise[A](
           predicate:   Predicate,
@@ -80,42 +81,12 @@ class SsoWorkaroundControllerSpec extends WordSpec with Matchers with FutureAwai
 
       implicit val request: Request[AnyContentAsEmpty.type] = FakeRequest()
       val result:           Result                          = await(action(request))
-      result.session.get(SessionKeys.affinityGroup) shouldBe Some("Individual")
 
       result.header.status              shouldBe 303
       result.header.headers("Location") shouldBe redirectingToUrl
     }
 
-    "clear affinityGroup in play session when affinityGroup retrieved from auth is None" in {
-      val fakeAuthConnector = new AuthConnector {
-        override def authorise[A](
-          predicate:   Predicate,
-          retrieval:   Retrieval[A]
-        )(implicit hc: HeaderCarrier,
-          ec:          ExecutionContext
-        ): Future[A] =
-          retrieval match {
-            case Retrievals.affinityGroup => Future successful None.asInstanceOf[A]
-            case _                        => ???
-          }
-      }
-      val controller = new SsoWorkaroundController(fakeAuthConnector,
-                                                   accessAccountUrl = configuredAccessAccountUrl,
-                                                   accountPayInUrl  = configuredAccountPayInUrl,
-                                                   infoUrl          = configuredInfoUrl,
-                                                   mcc)
-      val action = getAction(controller)
-
-      implicit val request: Request[AnyContentAsEmpty.type] =
-        FakeRequest().withSession(SessionKeys.affinityGroup -> "OldAffinityGroupInSession")
-      val result: Result = await(action(request))
-      result.session.get(SessionKeys.affinityGroup) shouldBe None
-
-      result.header.status              shouldBe 303
-      result.header.headers("Location") shouldBe redirectingToUrl
-    }
-
-    "skip the affinityGroup workaround when it is not needed because the user is not logged in" in {
+    "redirect if the user is not logged in" in {
       val fakeAuthConnector = new AuthConnector {
         override def authorise[A](
           predicate:   Predicate,
