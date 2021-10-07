@@ -20,12 +20,13 @@ import javax.inject.{Inject, Singleton}
 import play.api.i18n.MessagesApi
 import play.api.mvc.Request
 import play.twirl.api.Html
-import uk.gov.hmrc.mobilehelptosavefrontend.views
 import uk.gov.hmrc.play.bootstrap.frontend.http.FrontendErrorHandler
+import uk.gov.hmrc.mobilehelptosavefrontend.views.html.ErrorTemplate
 
 @Singleton
 class ErrorHandler @Inject() (
   val messagesApi:        MessagesApi,
+  view:                   ErrorTemplate,
   implicit val appConfig: AppConfig)
     extends FrontendErrorHandler {
 
@@ -35,5 +36,5 @@ class ErrorHandler @Inject() (
     message:          String
   )(implicit request: Request[_]
   ): Html =
-    views.html.error_template(pageTitle, heading, message)
+    view(pageTitle, heading, message)
 }

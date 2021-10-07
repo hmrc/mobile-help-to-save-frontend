@@ -15,6 +15,12 @@
  *@
 
 @import uk.gov.hmrc.mobilehelptosavefrontend.config.AppConfig
+@import uk.gov.hmrc.mobilehelptosavefrontend.views.html.GovukLayoutWrapper
+
+@this(
+ govukWrapper: GovukLayoutWrapper
+)
+
 @(pageTitle: String, heading: String, message: String)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 @contentHeader = {
@@ -25,4 +31,4 @@
     <p>@message</p>
 }
 
-@govuk_wrapper(appConfig = appConfig, title = pageTitle, contentHeader = Some(contentHeader), mainContent = mainContent)
+ @govukWrapper(Some(pageTitle), contentHeader)(mainContent)
