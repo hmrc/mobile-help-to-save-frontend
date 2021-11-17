@@ -60,7 +60,7 @@ lazy val scoverageSettings = {
   import scoverage.ScoverageKeys
   Seq(
     // Semicolon-separated list of regexs matching classes to exclude
-    ScoverageKeys.coverageExcludedPackages := """uk\.gov\.hmrc\.BuildInfo;.*\.Routes;.*\.RoutesPrefix;.*\.error_template;.*\.govuk_wrapper;.*\.Reverse[^.]*""",
+    ScoverageKeys.coverageExcludedPackages := """uk\.gov\.hmrc\.BuildInfo;.*\.Routes;.*\.RoutesPrefix;.*\.ErrorTemplate;.*\.GovukLayoutWrapper;.*\.Reverse[^.]*""",
     ScoverageKeys.coverageMinimum := 85.00,
     ScoverageKeys.coverageFailOnMinimum := false,
     ScoverageKeys.coverageHighlighting := true,
