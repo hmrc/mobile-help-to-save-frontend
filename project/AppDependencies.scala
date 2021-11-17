@@ -4,8 +4,8 @@ import sbt.{ModuleID, _}
 
 object AppDependencies {
 
-  private val play27Bootstrap      = "5.4.0"
-  private val playFrontendVersion  = "1.17.0-play-27"
+  private val play28Bootstrap      = "5.16.0"
+  private val playFrontendVersion  = "1.26.0-play-28"
 
   private val pegdownVersion       = "1.6.0"
   private val wireMockVersion      = "2.21.0"
@@ -17,7 +17,7 @@ object AppDependencies {
   val compile = Seq(
     "uk.gov.hmrc" %% "play-frontend-hmrc" % playFrontendVersion,
     ws,
-    "uk.gov.hmrc" %% "bootstrap-frontend-play-27" % play27Bootstrap
+    "uk.gov.hmrc" %% "bootstrap-frontend-play-28" % play28Bootstrap
   )
 
   val test: Seq[ModuleID] = testCommon("test")
