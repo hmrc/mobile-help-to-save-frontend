@@ -51,7 +51,6 @@ lazy val microservice = Project(appName, file("."))
     parallelExecution in IntegrationTest := false,
 
     resolvers ++= Seq(
-      Resolver.bintrayRepo("hmrc", "releases"),
       Resolver.jcenterRepo
     )
   )

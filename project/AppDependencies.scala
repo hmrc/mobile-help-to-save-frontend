@@ -5,7 +5,7 @@ import sbt.{ModuleID, _}
 object AppDependencies {
 
   private val play28Bootstrap      = "5.24.0"
-  private val playFrontendVersion  = "3.21.0-play-28"
+  private val playFrontendVersion  = "7.14.0-play-28"
   private val pegdownVersion       = "1.6.0"
   private val wireMockVersion      = "2.21.0"
   private val scalaTestPlusVersion = "4.0.3"
