@@ -16,7 +16,9 @@
 
 package uk.gov.hmrc.mobilehelptosavefrontend
 
-import org.scalatest.{Matchers, OptionValues, WordSpec}
+import org.scalatest.OptionValues
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpec
 import play.api.Application
 import play.api.http.HttpConfiguration
 import play.api.test.{DefaultAwaitTimeout, FutureAwaits}
@@ -25,7 +27,7 @@ import uk.gov.hmrc.mobilehelptosavefrontend.support.{OneServerPerSuiteWsClient, 
 import uk.gov.hmrc.play.bootstrap.frontend.filters.crypto.SessionCookieCrypto
 
 class SsoWorkaroundISpec
-    extends WordSpec
+    extends AnyWordSpec
     with Matchers
     with OptionValues
     with FutureAwaits
@@ -71,8 +73,8 @@ class SsoWorkaroundISpec
           .withFollowRedirects(false)
           .get()
       )
-      response.status                                      shouldBe 303
-      response.header("Location").value                    shouldBe redirectingToUrl
+      response.status                   shouldBe 303
+      response.header("Location").value shouldBe redirectingToUrl
     }
 
     "redirect even when user is not logged in (affinityGroup workaround not required)" in {
