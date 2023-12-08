@@ -17,7 +17,6 @@
 import TestPhases.oneForkedJvmPerTest
 import sbt.Keys.retrieveManaged
 import uk.gov.hmrc.DefaultBuildSettings.{addTestReportOption, defaultSettings, scalaSettings}
-import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin.publishingSettings
 
 val appName = "mobile-help-to-save-frontend"
 
@@ -28,17 +27,13 @@ lazy val microservice = Project(appName, file("."))
   .settings(inConfig(IntegrationTest)(Defaults.itSettings): _*)
   .settings(scoverageSettings: _*)
   .settings(scalaSettings: _*)
-  .settings(scalaVersion := "2.12.8")
-  .settings(publishingSettings: _*)
+  .settings(scalaVersion := "2.13.8")
   .settings(defaultSettings(): _*)
   .settings(
     majorVersion := 0,
     PlayKeys.playDefaultPort := 8249,
-    // from https://github.com/typelevel/cats/blob/master/README.md
-    scalacOptions += "-Ypartial-unification",
     addCommandAlias("testAll", ";reload;test;it:test"),
     libraryDependencies ++= AppDependencies.appDependencies,
-    dependencyOverrides ++= AppDependencies.overrides(),
     retrieveManaged := true,
     update / evictionWarningOptions := EvictionWarningOptions.default.withWarnScalaVersionEviction(false),
 
@@ -60,7 +55,7 @@ lazy val scoverageSettings = {
   Seq(
     // Semicolon-separated list of regexs matching classes to exclude
     ScoverageKeys.coverageExcludedPackages := """uk\.gov\.hmrc\.BuildInfo;.*\.Routes;.*\.RoutesPrefix;.*\.ErrorTemplate;.*\.GovukLayoutWrapper;.*\.Reverse[^.]*""",
-    ScoverageKeys.coverageMinimum := 86.00,
+    ScoverageKeys.coverageMinimumStmtTotal := 86.00,
     ScoverageKeys.coverageFailOnMinimum := false,
     ScoverageKeys.coverageHighlighting := true,
     Test / parallelExecution := false

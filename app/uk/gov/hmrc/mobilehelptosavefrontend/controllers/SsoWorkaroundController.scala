@@ -18,7 +18,7 @@ package uk.gov.hmrc.mobilehelptosavefrontend.controllers
 
 import javax.inject.{Inject, Named, Singleton}
 import play.api.mvc._
-import uk.gov.hmrc.auth.core.{AuthConnector, AuthorisedFunctions, NoActiveSession}
+import uk.gov.hmrc.auth.core.{AuthConnector, AuthorisedFunctions}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import scala.concurrent.{ExecutionContext, Future}

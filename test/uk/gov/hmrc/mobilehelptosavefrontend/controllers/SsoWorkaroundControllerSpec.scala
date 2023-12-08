@@ -16,7 +16,8 @@
 
 package uk.gov.hmrc.mobilehelptosavefrontend.controllers
 
-import org.scalatest.{Matchers, WordSpec}
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpec
 import play.api.mvc._
 import play.api.test.Helpers._
 import play.api.test.{DefaultAwaitTimeout, FakeRequest, FutureAwaits}
@@ -29,7 +30,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ExecutionContext, Future}
 
-class SsoWorkaroundControllerSpec extends WordSpec with Matchers with FutureAwaits with DefaultAwaitTimeout {
+class SsoWorkaroundControllerSpec extends AnyWordSpec with Matchers with FutureAwaits with DefaultAwaitTimeout {
 
   private val configuredAccessAccountUrl = "/help-to-save/access-account"
   private val configuredAccountPayInUrl  = "/help-to-save/pay-in"
