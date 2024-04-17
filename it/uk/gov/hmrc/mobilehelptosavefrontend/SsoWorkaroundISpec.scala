@@ -20,11 +20,9 @@ import org.scalatest.OptionValues
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.Application
-import play.api.http.HttpConfiguration
 import play.api.test.{DefaultAwaitTimeout, FutureAwaits}
 import uk.gov.hmrc.mobilehelptosavefrontend.stubs.AuthStub
 import uk.gov.hmrc.mobilehelptosavefrontend.support.{OneServerPerSuiteWsClient, WireMockSupport}
-import uk.gov.hmrc.play.bootstrap.frontend.filters.crypto.SessionCookieCrypto
 
 class SsoWorkaroundISpec
     extends AnyWordSpec
@@ -44,9 +42,6 @@ class SsoWorkaroundISpec
     .configure("helpToSave.accountPayInUrl" -> configuredAccountPayInUrl)
     .configure("helpToSave.infoUrl" -> configuredInfoUrl)
     .build()
-
-  private lazy val sessionCrypto     = app.injector.instanceOf[SessionCookieCrypto]
-  private lazy val httpConfiguration = app.injector.instanceOf[HttpConfiguration]
 
   "GET /mobile-help-to-save/access-account" should {
     behave like anSsoWorkaroundEndpoint(withUrl          = "/mobile-help-to-save/access-account",
