@@ -3,8 +3,8 @@ import sbt._
 
 object AppDependencies {
 
-  private val playBootstrap       = "8.5.0"
-  private val playFrontendVersion = "9.6.0"
+  private val playBootstrap       = "9.5.0"
+  private val playFrontendVersion = "11.3.0"
   private val pegdownVersion      = "1.6.0"
   private val wireMockVersion     = "2.21.0"
 
