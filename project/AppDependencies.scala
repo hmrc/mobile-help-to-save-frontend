@@ -1,12 +1,12 @@
 import play.sbt.PlayImport.ws
-import sbt._
+import sbt.*
 
 object AppDependencies {
 
-  private val playBootstrap       = "9.16.0"
-  private val playFrontendVersion = "12.6.0"
-  private val flexmarkVersion     = "0.64.8"
-  private val wireMockVersion     = "2.21.0"
+  private val playBootstrap = "9.16.0"
+  private val playFrontendVersion = "12.7.0"
+  private val flexmarkVersion = "0.64.8"
+  private val wireMockVersion = "2.21.0"
 
   lazy val appDependencies: Seq[ModuleID] =
     compile ++ test ++ integrationTest
@@ -22,8 +22,8 @@ object AppDependencies {
   val integrationTest: Seq[ModuleID] = testCommon("it") ++ Seq.empty
 
   def testCommon(scope: String) = Seq(
-    "com.vladsch.flexmark" % "flexmark-all"            % flexmarkVersion % scope,
-    "uk.gov.hmrc"          %% "bootstrap-test-play-30" % playBootstrap   % scope
+    "com.vladsch.flexmark" % "flexmark-all"           % flexmarkVersion % scope,
+    "uk.gov.hmrc"         %% "bootstrap-test-play-30" % playBootstrap   % scope
   )
 
 }
