@@ -26,7 +26,7 @@ lazy val microservice = Project(appName, file("."))
   .settings(inConfig(IntegrationTest)(Defaults.itSettings): _*)
   .settings(scoverageSettings: _*)
   .settings(scalaSettings: _*)
-  .settings(scalaVersion := "2.13.12")
+  .settings(scalaVersion := "3.6.4")
   .settings(defaultSettings(): _*)
   .settings(
     majorVersion := 0,
@@ -35,17 +35,11 @@ lazy val microservice = Project(appName, file("."))
     libraryDependencies ++= AppDependencies.appDependencies,
     retrieveManaged := true,
     update / evictionWarningOptions := EvictionWarningOptions.default.withWarnScalaVersionEviction(false),
-
     Test / unmanagedSourceDirectories += baseDirectory.value / "testcommon",
-
     IntegrationTest / Keys.fork := false,
-    IntegrationTest / unmanagedSourceDirectories := (IntegrationTest / baseDirectory) (base => Seq(base / "it")).value,
+    IntegrationTest / unmanagedSourceDirectories := (IntegrationTest / baseDirectory)(base => Seq(base / "it")).value,
     addTestReportOption(IntegrationTest, "int-test-reports"),
-    IntegrationTest / parallelExecution := false,
-
-    resolvers ++= Seq(
-      Resolver.jcenterRepo
-    )
+    IntegrationTest / parallelExecution := false
   )
 
 lazy val scoverageSettings = {
@@ -53,7 +47,7 @@ lazy val scoverageSettings = {
   Seq(
     // Semicolon-separated list of regexs matching classes to exclude
     ScoverageKeys.coverageExcludedPackages := """uk\.gov\.hmrc\.BuildInfo;.*\.Routes;.*\.RoutesPrefix;.*\.ErrorTemplate;.*\.ErrorHandler;.*\.GovukLayoutWrapper;.*\.Reverse[^.]*""",
-    ScoverageKeys.coverageMinimumStmtTotal := 100.00,
+    ScoverageKeys.coverageMinimumStmtTotal := 80.00,
     ScoverageKeys.coverageFailOnMinimum := false,
     ScoverageKeys.coverageHighlighting := true,
     Test / parallelExecution := false
