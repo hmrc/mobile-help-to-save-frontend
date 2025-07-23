@@ -27,7 +27,7 @@
         pageTitle: Option[String] = None,
         beforeContentBlock: Html = Html("")
 
-)(contentBlock: Html)(implicit messages: Messages, request: Request[_])
+)(contentBlock: Html)(implicit messages: Messages, request: Request[?])
 @head = {
 }
 
